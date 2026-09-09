@@ -62,7 +62,7 @@ java -cp ".:../lib/mysql-connector-j-9.1.0.jar" Main
 
 *(Atenção: substitua `mysql-connector-j-9.1.0.jar` pelo nome exato da versão que você baixou).*
 
-> **💡 Dica Profissional:** Para evitar a complexidade do terminal, abra a pasta `clinica-vida` em uma IDE como **IntelliJ IDEA** ou **Eclipse**. Basta adicionar o `.jar` do Connector/J nas bibliotecas (Libraries) do projeto e rodar o arquivo `Main.java`.
+> **💡 Dica:** Para evitar a complexidade do terminal, abra a pasta `clinica-vida` em uma IDE como **IntelliJ IDEA** ou **Eclipse**. Basta adicionar o `.jar` do Connector/J nas bibliotecas (Libraries) do projeto e rodar o arquivo `Main.java`.
 
 ---
 
