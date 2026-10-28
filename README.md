@@ -1,110 +1,90 @@
-# Clínica Vida | Plataforma de Gestão Médica Integrada
+# Clínica Vida
 
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
+Sistema desktop para clínicas e consultórios: pacientes, médicos, convênios, agenda de consultas, prontuário, pagamentos e relatórios. **A agenda não deixa marcar duas consultas para o mesmo médico no mesmo horário.** Feito em Java com Swing, MySQL e JDBC.
 
-Sistema completo para gerenciamento de clínicas e consultórios médicos. O projeto contempla desde o cadastro de entidades básicas (médicos e pacientes) até o agendamento inteligente de consultas com validação de conflitos de horário e acompanhamento de status.
+![Java](https://img.shields.io/badge/Java_17+-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL_8-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
-## 💡 Sobre o Projeto e Intuito
+![Agenda de consultas](docs/agenda.png)
 
-O Clínica Vida nasceu com o propósito de modernizar a gestão operacional de consultórios e clínicas de saúde de pequeno a médio porte. Em muitos estabelecimentos, a administração ainda é feita de forma manual (planilhas ou papel), o que gera a perda de históricos, o risco de agendamentos duplicados e a lentidão na recepção.
+| Tentando marcar no horário ocupado | Relatórios |
+| :---: | :---: |
+| ![Aviso de conflito de horário](docs/conflito.png) | ![Faturamento e consultas por médico e convênio](docs/relatorios.png) |
 
-Para solucionar essas dores, o sistema foi projetado para atuar como um hub centralizador da clínica. Na prática, o software permite que a recepção e a administração realizem as seguintes operações:
-- **Cadastro de Pacientes:** Registro de dados pessoais, documentos e contatos.
-- **Gestão do Corpo Clínico:** Cadastro de médicos vinculados às suas especialidades e CRM.
-- **Agendamento de Consultas:** Marcação de horários vinculando diretamente o paciente ao médico escolhido.
-- **Controle de Fluxo (Status):** Acompanhamento da jornada do paciente alterando o status da consulta (ex: Agendada, Em Andamento, Finalizada).
-- **Trava de Segurança:** O motor do sistema impede automaticamente que duas consultas sejam marcadas para o mesmo médico no exato mesmo horário.
+*Pacientes e CPFs de exemplo.*
 
-## 🚀 Tecnologias e Arquitetura
+## O que este projeto mostra
 
-O sistema foi desenvolvido aplicando a separação de responsabilidades (Padrão DAO e MVC) e boas práticas de Orientação a Objetos:
-- **Linguagem:** Java (JDK 17+)
-- **Interface Gráfica (UI):** Java Swing (JFrame, JTabbedPane, JTable)
-- **Banco de Dados:** MySQL
-- **Integração:** JDBC (Connector/J) com `PreparedStatement` para segurança contra SQL Injection.
-- **Arquitetura:** Model (Entidades), DAO (Acesso a Dados) e UI (Telas).
+- **Regra que evita erro da recepção:** antes de agendar, `ConsultaDAO.existeConflito` confere se o médico já tem consulta naquele horário, e o banco reforça com `UNIQUE (medico_id, data_hora)`.
+- **Fluxo completo do atendimento:** a consulta nasce agendada; depois é marcada como realizada (com prontuário e pagamento) ou cancelada.
+- **Relatórios com dados agrupados:** faturamento no período, consultas por médico e por convênio.
+- **Organização em camadas:** `model`, `dao` (com `PreparedStatement`, o que protege contra SQL Injection), `ui` e `util`.
 
-## ⚙️ Pré-requisitos
+## Contexto
 
-Para rodar este projeto localmente, você precisará de:
-*   JDK (Java Development Kit) instalado.
-*   MySQL rodando na sua máquina.
-*   Driver MySQL Connector/J (arquivo `.jar`).
+Muitos consultórios ainda controlam a agenda em papel ou planilha, o que leva a horários marcados duas vezes, histórico de atendimento perdido e recepção lenta. O Clínica Vida centraliza a operação: a recepção cadastra pacientes e convênios, agenda com o médico certo, e ao fim do atendimento registra prontuário e pagamento no mesmo lugar.
 
-## 🛠️ Como Configurar e Executar
+## Funcionalidades
 
-**1. Preparando o Banco de Dados**
-O sistema depende de um banco de dados relacional para funcionar. No final desta página (na seção Schema), há um código SQL. Copie aquele código e execute-o no seu MySQL Workbench para criar o banco de dados `clinica_vida_db` e as tabelas necessárias.
+- **Pacientes:** nome, CPF, nascimento, telefone, e-mail e convênio (opcional).
+- **Médicos:** nome, CRM e especialidade.
+- **Convênios:** nome e valor da consulta.
+- **Agenda:** marca consulta com paciente, médico, data, hora e valor; filtra por período; bloqueia conflito de horário.
+- **Atendimento:** marca a consulta como realizada, registrando prontuário (diagnóstico e prescrição) e pagamento, ou cancela a consulta.
+- **Pagamento:** dinheiro, cartão, Pix ou convênio.
+- **Relatórios:** total faturado no período, consultas por médico e por convênio.
 
-**2. Configurando a Conexão**
-*   Crie uma pasta chamada `lib` na raiz do projeto e coloque o arquivo do driver JDBC (`mysql-connector-j-x.x.x.jar`) dentro dela.
-*   Acesse a classe de conexão no código Java do projeto e ajuste as credenciais (usuário e senha) para bater com as do seu banco de dados local.
+## Estrutura
 
-**3. Compilando e Rodando (Via Terminal)**
-
-No Windows:
-```bash
-cd src
-javac -d ../out -cp ".;../lib/mysql-connector-j.jar" *.java
-cd ../out
-java -cp ".;../lib/mysql-connector-j.jar" Main
+```text
+sql/schema.sql            # cria o banco clinica_vida, as tabelas, convênios e médicos de exemplo
+src/
+├── Main.java
+├── config.properties.example
+├── model/                # Paciente, Medico, Convenio, Consulta, Prontuario, Pagamento, StatusConsulta, FormaPagamento
+├── dao/                  # um DAO por entidade + RelatorioDAO
+├── ui/                   # TelaPrincipal e as abas: Pacientes, Médicos, Convênios, Agenda, Relatórios
+└── util/ConexaoFactory.java
 ```
 
-No macOS / Linux:
+| Tabela | Conteúdo |
+| :--- | :--- |
+| `paciente` | Dados pessoais, CPF (único) e convênio. |
+| `medico` | Nome, CRM (único) e especialidade. |
+| `convenio` | Nome e valor da consulta. |
+| `consulta` | Paciente, médico, data e hora, status (agendada, realizada, cancelada), valor e observações. Um médico não pode ter duas consultas no mesmo horário. |
+| `prontuario` | Diagnóstico e prescrição de uma consulta. |
+| `pagamento` | Valor, forma de pagamento e data de uma consulta. |
+
+## Como rodar
+
+Pré-requisitos: JDK 17+, MySQL 8 e o driver [MySQL Connector/J](https://dev.mysql.com/downloads/connector/j/) (`.jar`).
+
+1. Rode `sql/schema.sql` no MySQL. Ele cria o banco `clinica_vida`, as tabelas, três convênios e três médicos.
+2. Copie `src/config.properties.example` para `src/config.properties` e preencha usuário e senha do seu MySQL.
+3. Rode pela IDE (adicione o `.jar` do Connector/J às bibliotecas e execute `Main.java`) ou pelo terminal, com o `.jar` numa pasta `lib/`:
+
 ```bash
 cd src
 javac -d ../out -cp ".:../lib/mysql-connector-j.jar" $(find . -name "*.java")
+cp config.properties ../out/
 cd ../out
 java -cp ".:../lib/mysql-connector-j.jar" Main
 ```
-> **💡 Dica:** Para evitar a complexidade do terminal, abra a pasta do projeto em uma IDE como IntelliJ IDEA ou Eclipse, adicione o `.jar` do Connector/J nas bibliotecas (Libraries) do projeto e rode direto pelo arquivo `Main.java`.
 
-## 🧪 Roteiro de Teste (Casos de Uso)
+No Windows, troque `:` por `;` no `-cp`.
 
-Com o sistema aberto, navegue pelas abas para testar as regras de negócio:
-1. **Pacientes:** Cadastre um paciente preenchendo as informações obrigatórias corretamente.
-2. **Médicos:** Cadastre um médico e informe sua especialidade e CRM.
-3. **Agenda:** Tente agendar uma consulta escolhendo o paciente, o médico e a data/hora.
-4. **Validação:** Tente agendar outra consulta para o mesmo médico no exato mesmo horário. O sistema deve bloquear a ação automaticamente.
-5. **Atendimento:** Altere o status da consulta para simular o andamento do atendimento.
+## Roteiro rápido de teste
 
-## ⚠️ Solução de Problemas (Troubleshooting)
+1. Cadastre um paciente (médicos e convênios já vêm no script).
+2. Na aba Agenda, marque uma consulta.
+3. Tente marcar outra para o mesmo médico no mesmo horário: o sistema avisa e bloqueia.
+4. Marque a consulta como realizada, preencha prontuário e pagamento.
+5. Na aba Relatórios, escolha o período e gere os relatórios.
 
-*   `ClassNotFoundException: com.mysql.cj.jdbc.Driver`: O arquivo `.jar` do Connector não foi encontrado. Verifique se ele está na pasta `lib` e se o nome no comando `-cp` está correto.
-*   `Access denied for user`: Usuário ou senha do banco incorretos. Ajuste as credenciais no seu código Java.
-*   `Communications link failure`: O serviço do MySQL não está rodando no seu computador. Inicie o serviço pelo sistema operacional.
-
-## 🗄️ Estrutura do Banco de Dados (Schema)
-
-Nota: Este é o script mencionado no Passo 1. Copie e cole este código no MySQL Workbench para criar a estrutura onde o Java vai salvar os dados.
-
-```sql
-CREATE DATABASE IF NOT EXISTS clinica_vida_db;
-USE clinica_vida_db;
-
-CREATE TABLE IF NOT EXISTS pacientes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(120) NOT NULL,
-    cpf VARCHAR(14) NOT NULL UNIQUE,
-    telefone VARCHAR(20) NOT NULL,
-    data_nascimento DATE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS medicos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(120) NOT NULL,
-    crm VARCHAR(20) NOT NULL UNIQUE,
-    especialidade VARCHAR(80) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS consultas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    paciente_id INT NOT NULL,
-    medico_id INT NOT NULL,
-    data_hora DATETIME NOT NULL,
-    status VARCHAR(30) NOT NULL,
-    CONSTRAINT fk_consulta_paciente FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
-    CONSTRAINT fk_consulta_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
-);
-```
+| Erro | Solução |
+| :--- | :--- |
+| `ClassNotFoundException: com.mysql.cj.jdbc.Driver` | O `.jar` do Connector/J não está no classpath (pasta `lib/` ou bibliotecas da IDE). |
+| `Access denied for user` | Usuário ou senha errados no `config.properties`. |
+| `Public Key Retrieval is not allowed` | Acrescente `&allowPublicKeyRetrieval=true` na `db.url`. |
+| `Communications link failure` | O MySQL não está ligado. |
