@@ -82,6 +82,7 @@ No Windows, troque `:` por `;` no `-cp`.
 | Erro | Solução |
 | :--- | :--- |
 | `ClassNotFoundException: com.mysql.cj.jdbc.Driver` | O `.jar` do Connector/J não está no classpath (pasta `lib/` ou bibliotecas da IDE). |
+| `Arquivo src/config.properties não encontrado` | O arquivo não foi criado a partir do `.example` ou não foi copiado para a pasta `out`. |
 | `Access denied for user` | Usuário ou senha errados no `config.properties`. |
 | `Public Key Retrieval is not allowed` | Acrescente `&allowPublicKeyRetrieval=true` na `db.url`. |
 | `Communications link failure` | O MySQL não está ligado. |

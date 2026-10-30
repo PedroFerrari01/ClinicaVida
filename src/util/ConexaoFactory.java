@@ -18,15 +18,12 @@ public class ConexaoFactory {
 
     static {
         try (InputStream in = ConexaoFactory.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (in != null) {
-                props.load(in);
-            } else {
-                // valores padrão caso o arquivo não seja encontrado
-                props.setProperty("db.url", "jdbc:mysql://localhost:3306/clinica_vida?useSSL=false&serverTimezone=UTC");
-                props.setProperty("db.user", "clinica_app");
-                props.setProperty("db.password", "clinica123");
-                props.setProperty("db.driver", "com.mysql.cj.jdbc.Driver");
+            if (in == null) {
+                // sem senha padrão no código: as credenciais vêm só do arquivo
+                throw new IllegalStateException(
+                        "Arquivo src/config.properties não encontrado. Copie o config.properties.example e preencha com os dados do seu MySQL.");
             }
+            props.load(in);
         } catch (IOException e) {
             throw new RuntimeException("Não foi possível carregar config.properties", e);
         }
