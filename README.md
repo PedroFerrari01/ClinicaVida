@@ -1,9 +1,6 @@
-# Clínica Vida
+<img src="docs/banner.png" alt="Clínica Vida: agenda, prontuário e convênios, sem dois pacientes no mesmo horário. Java, Swing, MySQL e JDBC" width="100%">
 
 Sistema desktop para clínicas e consultórios: pacientes, médicos, convênios, agenda de consultas, prontuário, pagamentos e relatórios. **A agenda não deixa marcar duas consultas para o mesmo médico no mesmo horário.** Feito em Java com Swing, MySQL e JDBC.
-
-![Java](https://img.shields.io/badge/Java_17+-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL_8-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
 ![Agenda de consultas](docs/agenda.png)
 
