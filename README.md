@@ -86,3 +86,11 @@ No Windows, troque `:` por `;` no `-cp`.
 | `Access denied for user` | Usuário ou senha errados no `config.properties`. |
 | `Public Key Retrieval is not allowed` | Acrescente `&allowPublicKeyRetrieval=true` na `db.url`. |
 | `Communications link failure` | O MySQL não está ligado. |
+
+## Próximos passos
+
+- [ ] Testes automatizados (JUnit) para a regra de conflito de horário
+- [ ] Maven e GitHub Actions para rodar os testes a cada envio
+- [ ] Horário de trabalho e folga de cada médico na agenda
+- [ ] Lembrete de consulta por e-mail ou WhatsApp
+- [ ] Prontuário e relatórios em PDF
